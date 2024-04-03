@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.service.Impl;
+package ru.kata.spring.boot_security.demo.service.impl;
 
 
 
@@ -93,5 +93,14 @@ public class UserServiceImpl implements UserService {
             entityManager.remove(role);
         }
     }
+
+    public boolean isEmailUnique(String email) {
+        return repository.findByEmail(email).isEmpty();
+    }
+
+    public boolean isEmailUnique(String email, Long exceptId) {
+        return repository.findByEmail(email).stream().allMatch(user -> user.getId().equals(exceptId));
+    }
+
 
 }

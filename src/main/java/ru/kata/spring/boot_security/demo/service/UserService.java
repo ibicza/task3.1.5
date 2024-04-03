@@ -16,20 +16,23 @@ public interface UserService {
 
     Optional<User> getUserById(Long id);
 
-    public Optional<User> getUserByName(String name);
+    Optional<User> getUserByName(String name);
 
     void deleteUser(Long id);
 
-    public Set<Role> getAllRoles();
+    Set<Role> getAllRoles();
 
-    public Role getRoleById(Long id);
+    Role getRoleById(Long id);
 
-    public Role saveRole(Role role);
+    Role saveRole(Role role);
 
-    public void deleteRole(Long id);
+    void deleteRole(Long id);
 
-    public Set<Role> getRolesByIds(Set<Long> ids);
+    Set<Role> getRolesByIds(Set<Long> ids);
 
+    boolean isEmailUnique(String email);
+
+    boolean isEmailUnique(String email, Long exceptId);
 
 
 }

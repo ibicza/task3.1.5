@@ -2,6 +2,8 @@ package ru.kata.spring.boot_security.demo.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,17 +14,21 @@ import java.util.Set;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     private String name;
 
+    @NonNull
     @Column(unique = true)
     private String email;
 
+    @NonNull
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -38,6 +44,7 @@ public class User implements UserDetails {
         return roles;
     }
 
+    @NonNull
     @Override
     public String getPassword() {
         return password;

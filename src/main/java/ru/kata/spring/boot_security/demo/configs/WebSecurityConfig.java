@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import ru.kata.spring.boot_security.demo.service.Impl.UserDetailServiceImpl;
+import ru.kata.spring.boot_security.demo.service.impl.UserDetailServiceImpl;
 
 
 
@@ -32,6 +32,7 @@ public class WebSecurityConfig{
 
         return new UserDetailServiceImpl();
     }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

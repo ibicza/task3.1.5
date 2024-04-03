@@ -11,6 +11,12 @@
 </form>
 
 <h1>Edit User</h1>
+
+<div th:if="${error}" class="alert alert-danger" role="alert">
+    <p th:text="${error}"></p>
+</div>
+
+
 <form action="/admin/edit" method="post" th:object="${user}">
     <input type="hidden" th:field="*{id}">
     <label for="name">Name:</label>
