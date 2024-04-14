@@ -1,21 +1,18 @@
 package ru.kata.spring.boot_security.demo.controller;
 
-
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-
+import java.security.Principal;
 import java.util.Optional;
 import java.util.Set;
-
-
 
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
@@ -23,76 +20,43 @@ import java.util.Set;
 @AllArgsConstructor
 public class AdminController {
 
-
-    public static final String REDIRECT_HOME = "redirect:/admin";
-    public static final String REDIRECT_ADD = "redirect:/admin/add";
-    public static final String REDIRECT_EDIT = "redirect:/admin/edit?id=";
-    public static final String ERROR = "error";
-    private UserService userService;
-
+    public static final String REDIRECT_ADMIN = "redirect:/admin";
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     @GetMapping
-    public String getAllUsers(Model model) {
+    public String adminPage(Model model, Principal principal) {
+        model.addAttribute("activeUser", userRepository.getUserByName(principal.getName()));
         model.addAttribute("users", userService.getAllUsers());
-        return "userList";
-    }
-
-    @GetMapping("/add")
-    public String addUserForm(Model model) {
-        model.addAttribute("user", new User());
         model.addAttribute("roles", userService.getAllRoles());
-        return "addUser";
-    }
-
-    @GetMapping("/edit")
-    public String editUserForm(@RequestParam("id") Long id, Model model) {
-        Optional<User> user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        model.addAttribute("allRoles", userService.getAllRoles());
-        return "editUser";
-    }
-
-
-    @PostMapping("/edit")
-    public String editUser(@ModelAttribute("user") User user, @RequestParam("roles") Optional<Set<Long>> roleIds, RedirectAttributes redirectAttributes) {
-        if (userService.isEmailUnique(user.getEmail(), user.getId())) {
-            if (roleIds.isPresent()) {
-                Set<Role> roles = userService.getRolesByIds(roleIds.get());
-                user.setRoles(roles);
-                userService.saveUser(user);
-                return REDIRECT_HOME;
-            } else {
-                redirectAttributes.addFlashAttribute(ERROR, "Выберите хотя бы одну роль");
-                return REDIRECT_EDIT + user.getId();
-            }
-        } else {
-            redirectAttributes.addFlashAttribute(ERROR, "Пользователь с таким адресом электронной почты уже существует");
-            return REDIRECT_EDIT + user.getId();
-        }
+        return "adminPage";
     }
 
     @PostMapping("/add")
-    public String addUser(@ModelAttribute("user") User user, @RequestParam("roles") Optional<Set<Long>> roleIds, RedirectAttributes redirectAttributes) {
+    public String addUser(@ModelAttribute User user, @RequestParam("roles") Optional<Set<Long>> roleIds, RedirectAttributes redirectAttributes) {
         if (userService.isEmailUnique(user.getEmail())) {
-            if (roleIds.isPresent()) {
-                Set<Role> roles = userService.getRolesByIds(roleIds.get());
-                user.setRoles(roles);
-                userService.saveUser(user);
-                return REDIRECT_HOME;
-            } else {
-                redirectAttributes.addFlashAttribute(ERROR, "Выберите хотя бы одну роль");
-                return REDIRECT_ADD;
-            }
+            roleIds.ifPresent(ids -> user.setRoles(userService.getRolesByIds(ids)));
+            userService.saveUser(user);
         } else {
-            redirectAttributes.addFlashAttribute(ERROR, "Пользователь с таким адресом электронной почты уже существует");
-            return REDIRECT_ADD;
+            redirectAttributes.addFlashAttribute("error", true);
+            redirectAttributes.addFlashAttribute("email", user.getEmail());
         }
+        return REDIRECT_ADMIN;
     }
 
+    @PostMapping("/edit")
+    public String editUser(@ModelAttribute User user, @RequestParam("roles") Optional<Set<Long>> roleIds) {
+        if (userService.isEmailUnique(user.getEmail(), user.getId())) {
+            roleIds.ifPresent(ids -> user.setRoles(userService.getRolesByIds(ids)));
+            userService.saveUser(user);
+        }
+        return REDIRECT_ADMIN;
+    }
 
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public String deleteUser(@RequestParam("id") Long id) {
         userService.deleteUser(id);
-        return REDIRECT_HOME;
+        return REDIRECT_ADMIN;
     }
+
 }

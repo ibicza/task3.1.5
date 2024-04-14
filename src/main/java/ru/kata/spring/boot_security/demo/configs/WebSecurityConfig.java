@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 
+
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,13 +24,12 @@ import ru.kata.spring.boot_security.demo.service.impl.UserDetailServiceImpl;
 @EnableWebSecurity
 @EnableMethodSecurity
 @AllArgsConstructor
-public class WebSecurityConfig{
+public class WebSecurityConfig {
 
     private final SuccessUserHandler successUserHandler;
 
     @Bean
     public UserDetailsService userDetailsService() {
-
         return new UserDetailServiceImpl();
     }
 
@@ -39,7 +39,8 @@ public class WebSecurityConfig{
         return http.
                 csrf(AbstractHttpConfigurer::disable).
                 authorizeHttpRequests(auth -> auth.requestMatchers("/**").authenticated()).
-                formLogin(form -> form.successHandler(successUserHandler).permitAll()).build();
+                formLogin(form -> form.successHandler(successUserHandler).loginPage("/login").permitAll())
+                .build();
     }
 
     @Bean

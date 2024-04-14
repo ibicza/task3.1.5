@@ -25,6 +25,11 @@ public class User implements UserDetails {
     private String name;
 
     @NonNull
+    private String lastName;
+
+    private int age;
+
+    @NonNull
     @Column(unique = true)
     private String email;
 
@@ -73,5 +78,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean hasRole(@NonNull String role){
+        return roles.stream().anyMatch(r -> r.getName().equals(role));
     }
 }
