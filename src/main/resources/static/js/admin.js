@@ -58,10 +58,11 @@ function getRoles() {
             const select = $('#rolesAdd');
             select.empty();
             roles.forEach(role => {
-                select.append(`<option value="${role.name}">${role.name}</option>`);
+                select.append(`<option value="${role.name}" data-id="${role.id}">${role.name}</option>`);
             });
         });
 }
+
 
 
 function addUser() {
@@ -70,7 +71,6 @@ function addUser() {
     const age = $('#age').val();
     const email = $('#email').val();
     const password = $('#password').val();
-    console.info(name, lastName, age, email, password);
     const roles = $('#rolesAdd').val();
 
     const userData = {
@@ -79,7 +79,7 @@ function addUser() {
         age: parseInt(age),
         email: email,
         password: password,
-        roles: roles
+        roles: roles.map(roleName => ({ name: roleName, id: $('#rolesAdd option[value="' + roleName + '"]').attr('data-id') }))
     };
 
     fetch('/api/users', {
@@ -92,11 +92,13 @@ function addUser() {
         .then(response => {
             if (response.ok) {
                 getUsers();
+                window.location.replace("/admin");
             } else {
                 $('#errorAlert').removeClass('d-none');
             }
         });
 }
+
 
 
 

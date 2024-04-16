@@ -10,7 +10,6 @@ import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,34 +40,9 @@ public class AdminController {
 
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user) {
-        System.out.println(user.getName());
-        System.out.println(user.getLastName());
-        System.out.println(user.getEmail());
-        System.out.println(user.getAge());
-        System.out.println(user.getPassword());
-        System.out.println(user.getRoles());
-        User trueUser = new User();
-        trueUser.setName(user.getName());
-        trueUser.setLastName(user.getLastName());
-        trueUser.setEmail(user.getEmail());
-        trueUser.setAge(user.getAge());
-        trueUser.setPassword(user.getPassword());
-
-
-        Set<Role> trueRoles = new HashSet<>();
-        user.getRoles().stream().forEach(role -> trueRoles.add(userService.getRoleByName(role.getName())));
-
-        System.out.println(trueRoles);
-
-
-        trueUser.setRoles(trueRoles);
-
-        System.out.println(trueUser.getRoles());
-        System.out.println(trueUser);
-
-        if (userService.isEmailUnique(trueUser.getEmail())) {
-            userService.saveUser(trueUser);
-            return ResponseEntity.ok(trueUser);
+        if (userService.isEmailUnique(user.getEmail())) {
+            userService.saveUser(user);
+            return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -89,10 +63,6 @@ public class AdminController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
-    }
-
-    private Set<Role> parseRoles (){
-        return null;
     }
 
 }
