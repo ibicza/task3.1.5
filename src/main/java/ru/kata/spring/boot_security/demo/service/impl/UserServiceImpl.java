@@ -68,6 +68,11 @@ public class UserServiceImpl implements UserService {
         return entityManager.find(Role.class, id);
     }
 
+    @Override
+    public Role getRoleByName(String name) {
+        return getAllRoles().stream().filter(role -> role.getName().equals(name)).findFirst().orElse(null);
+    }
+
     public Set<Role> getRolesByIds(Set<Long> ids) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Role> cq = cb.createQuery(Role.class);

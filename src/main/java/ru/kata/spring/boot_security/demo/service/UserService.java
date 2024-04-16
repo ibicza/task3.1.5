@@ -24,6 +24,8 @@ public interface UserService {
 
     Role getRoleById(Long id);
 
+    Role getRoleByName(String name);
+
     Role saveRole(Role role);
 
     void deleteRole(Long id);
