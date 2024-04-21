@@ -98,6 +98,37 @@ function saveChanges() {
     const password = $('#editUserPassword').val();
     const roles = $('#editUserRoles').val();
 
+    const link = '#errorAlertModal';
+    switch ('') {
+        case name:
+            $(link).text('Please fill name.');
+            $(link).removeClass('d-none');
+            return;
+        case lastName:
+            $(link).text('Please fill last name.');
+            $(link).removeClass('d-none');
+            return;
+        case age:
+            $(link).text('Please fill age.');
+            $(link).removeClass('d-none');
+            return;
+        case email:
+            $(link).text('Please fill email.');
+            $(link).removeClass('d-none');
+            return;
+        case password:
+            $(link).text('Please fill password.');
+            $(link).removeClass('d-none');
+            return;
+    }
+
+    if (roles.length === 0) {
+        console.info("")
+        $(link).text('Please choose at least one role.');
+        $(link).removeClass('d-none');
+        return;
+    }
+
     const user = {
         id: id,
         name: name,
@@ -116,6 +147,7 @@ function saveChanges() {
         body: JSON.stringify(user)
     }).then(response => {
         if (response.ok) {
+            console.info('successfully saved user :' + id)
             // Обновляем таблицу после успешного сохранения
             getUsers();
             $('#errorAlertModal').addClass('d-none');
@@ -216,6 +248,37 @@ function addUser() {
     const password = $('#password').val();
     const roles = $('#rolesAdd').val();
 
+    const link = '#errorAlert';
+    switch ('') {
+        case name:
+            $(link).text('Please fill name.');
+            $(link).removeClass('d-none');
+            return;
+        case lastName:
+            $(link).text('Please fill last name.');
+            $(link).removeClass('d-none');
+            return;
+        case age:
+            $(link).text('Please fill age.');
+            $(link).removeClass('d-none');
+            return;
+        case email:
+            $(link).text('Please fill email.');
+            $(link).removeClass('d-none');
+            return;
+        case password:
+            $(link).text('Please fill password.');
+            $(link).removeClass('d-none');
+            return;
+    }
+
+    if (roles.length === 0) {
+        console.info("")
+        $(link).text('Please choose at least one role.');
+        $(link).removeClass('d-none');
+        return;
+    }
+
     const userData = {
         name: name,
         lastName: lastName,
@@ -234,10 +297,12 @@ function addUser() {
     })
         .then(response => {
             if (response.ok) {
+                console.info('successfully added user :' + id)
                 getUsers();
                 document.getElementById('users-tab').click();
                 $('#errorAlert').addClass('d-none');
             } else {
+                $('#errorAlert').text('Email is already taken. Please choose another one.');
                 $('#errorAlert').removeClass('d-none');
             }
         });
@@ -249,3 +314,5 @@ function logout() {
             window.location.replace('/login');
         });
 }
+
+
