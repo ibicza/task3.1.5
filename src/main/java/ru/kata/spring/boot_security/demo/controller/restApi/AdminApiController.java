@@ -9,23 +9,18 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
-@RequestMapping("/api/users")
+@RequestMapping("/api/admin")
 @RestController
 @AllArgsConstructor
-public class AdminController {
+public class AdminApiController {
 
 
     private final UserService userService;
     private final UserRepository userRepository;
 
-    @GetMapping("/currentUser")
-    public User getCurrentUser(Principal principal){
-        return userRepository.getUserByName(principal.getName()).orElse(null);
-    }
 
     @GetMapping("/userList")
     public List<User> getAllUsers() {

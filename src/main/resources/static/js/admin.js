@@ -18,7 +18,7 @@ $(document).ready(function() {
 });
 
 function getLoggedInUser() {
-    fetch('/api/users/currentUser')
+    fetch('/api/user/currentUser')
         .then(response => response.json())
         .then(user => {
             $('#activeUserName').text(user.name);
@@ -28,7 +28,7 @@ function getLoggedInUser() {
 
 
 function getUsers() {
-    fetch('/api/users/userList')
+    fetch('/api/admin/userList')
         .then(response => response.json())
         .then(users => {
             $('#usersTableBody').empty();
@@ -51,7 +51,7 @@ function getUsers() {
         });
 }
 function showModalEdit(userId) {
-    fetch(`/api/users/${userId}`)
+    fetch(`/api/admin/${userId}`)
         .then(response => response.json())
         .then(user => {
             $('#editUserId').val(user.id);
@@ -139,7 +139,7 @@ function saveChanges() {
         roles: roles.map(roleName => ({ name: roleName, id: $('#rolesAdd option[value="' + roleName + '"]').attr('data-id') }))
     };
 
-    fetch(`/api/users/${id}`, {
+    fetch(`/api/admin/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -160,7 +160,7 @@ function saveChanges() {
 
 
 function showModalDelete(userId) {
-    fetch(`/api/users/${userId}`)
+    fetch(`/api/admin/${userId}`)
         .then(response => response.json())
         .then(user => {
             $('#deleteUserId').val(user.id);
@@ -199,7 +199,7 @@ function showModalDelete(userId) {
 
 function deleteUser(id) {
     console.info('deleting user :' + id)
-        fetch(`/api/users/${id}`, {
+        fetch(`/api/admin/${id}`, {
             method: 'DELETE',
         }).then(response => {
             if (response.ok) {
@@ -215,7 +215,7 @@ function deleteUser(id) {
 
 
 function getRoles() {
-    fetch('/api/users/roleList')
+    fetch('/api/admin/roleList')
         .then(response => response.json())
         .then(roles => {
             let select = $('#rolesAdd');
@@ -288,7 +288,7 @@ function addUser() {
         roles: roles.map(roleName => ({ name: roleName, id: $('#rolesAdd option[value="' + roleName + '"]').attr('data-id') }))
     };
 
-    fetch('/api/users', {
+    fetch('/api/admin', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -38,7 +38,16 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.
                 csrf(AbstractHttpConfigurer::disable).
-                authorizeHttpRequests(auth -> auth.requestMatchers("/**").authenticated()).
+                authorizeHttpRequests(auth -> auth// Allow access to login page
+                        .requestMatchers("/login").permitAll()
+                        // Restrict access to user API to authenticated users
+                        .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+                        // Restrict access to admin API to admins only
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Allow access to static resources
+                        .requestMatchers("/static/**").permitAll()
+                        // Allow access to other endpoints for authenticated users
+                        .anyRequest().authenticated()).
                 formLogin(form -> form.successHandler(successUserHandler).loginPage("/login").permitAll())
                 .build();
     }
