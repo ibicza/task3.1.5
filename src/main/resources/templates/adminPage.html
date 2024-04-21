@@ -36,9 +36,6 @@
                 <div class="tab-pane fade show active">
                     <div class="container mt-3">
                         <h1>Admin panel</h1>
-                        <div id="errorAlert" class="alert alert-danger d-none" role="alert">
-                            Email is already taken. Please choose another one.
-                        </div>
                         <ul class="nav nav-tabs md-0">
                             <li class="nav-item">
                                 <a class="nav-link active" id="users-tab" data-bs-toggle="tab" href="#users">Users table</a>
@@ -66,10 +63,113 @@
                                         <tbody id="usersTableBody"></tbody>
                                     </table>
                                 </div>
+                                <!-- Модальное окно для редактирования пользователя -->
+                                <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                    <!--код для модального окна редактирования -->
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                                                <div id="errorAlertModal" class="alert alert-danger d-none" role="alert">
+                                                    Email is already taken. Please choose another one.
+                                                </div>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <input type="hidden" name="id"/>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">ID</label>
+                                                        <input type="text" class="form-control" name="id" id="editUserId"   disabled>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="name" class="form-label">First Name</label>
+                                                        <input type="text" class="form-control"  name="name" id="editUserName" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="lastName" class="form-label">Last Name</label>
+                                                        <input type="text" class="form-control"  name="lastName" id="editUserLastName" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="age" class="form-label">Age</label>
+                                                        <input type="number" class="form-control"  name="age" id="editUserAge" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="email" class="form-label">Email</label>
+                                                        <input type="email" class="form-control"  name="email" id="editUserEmail" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="password" class="form-label">Password</label>
+                                                        <input type="password" class="form-control"  name="password" id="editUserPassword" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editUserRoles" class="form-label">Roles</label>
+                                                        <select name="roles" class="form-select" id="editUserRoles" multiple>
+                                                        </select>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-end">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary" id="editUserButton">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Модальное окно для удаления пользователя -->
+                                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel">Delete User</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <input type="hidden" name="id"/>
+                                                    <div class="mb-3">
+                                                        <label for="name" class="form-label">ID</label>
+                                                        <input type="text" class="form-control" name="id" id="deleteUserId" disabled>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="name" class="form-label">First Name</label>
+                                                        <input type="text" class="form-control"  name="name" id="deleteUserName" disabled>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="lastName" class="form-label">Last Name</label>
+                                                        <input type="text" class="form-control"  name="lastName" id="deleteUserLastName" disabled>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="age" class="form-label">Age</label>
+                                                        <input type="number" class="form-control" name="age" id="deleteUserAge" disabled>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="email" class="form-label">Email</label>
+                                                        <input type="email" class="form-control" name="email" id="deleteUserEmail" disabled>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="deleteUserRoles" class="form-label">Roles</label>
+                                                        <select id="deleteUserRoles" name="roles" class="form-select" multiple disabled>
+                                                        </select>
+                                                    </div>
+                                                    <div class="modal-footer justify-content-end">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-danger"  id="deleteUserButton">Delete</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="tab-pane fade" id="new-user">
                                 <div class="container m-0 p-0 text-center fw-bolder">
                                     <h2 style="background-color: #ebebeb" class="pt-3 pb-3 border-bottom border-secondary-subtle">Add New User</h2>
+                                    <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+                                        Email is already taken. Please choose another one.
+                                    </div>
                                     <form id="addUserForm" class="w-50 m-auto">
                                         <div class="mb-3">
                                             <label for="name" class="form-label">First Name</label>
@@ -97,7 +197,7 @@
                                                 <!-- Options will be dynamically added by JavaScript -->
                                             </select>
                                         </div>
-                                        <button type="submit" class="btn btn-primary">Add User</button>
+                                        <button type="button" class="btn btn-primary" onclick="addUser()">Add User</button>
                                     </form>
                                 </div>
                             </div>

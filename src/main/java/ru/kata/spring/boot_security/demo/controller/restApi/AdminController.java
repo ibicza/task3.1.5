@@ -47,6 +47,10 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        return userRepository.getUserById(id).orElse(null);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<User> editUser(@PathVariable Long id, @RequestBody User user) {

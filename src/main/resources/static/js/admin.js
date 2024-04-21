@@ -42,20 +42,163 @@ function getUsers() {
                         <td>${user.email}</td>
                         <td>${user.roles.map(role => role.name).join(', ')}</td>
                         <td>
-                            <button class="btn btn-primary" onclick="editUser(${user.id})">Edit</button>
-                            <button class="btn btn-danger" onclick="deleteUser(${user.id})">Delete</button>
+                            <button class="btn btn-primary" onclick="showModalEdit(${user.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="showModalDelete(${user.id})">Delete</button>
                         </td>
                     </tr>
                 `);
             });
         });
 }
+function showModalEdit(userId) {
+    fetch(`/api/users/${userId}`)
+        .then(response => response.json())
+        .then(user => {
+            $('#editUserId').val(user.id);
+            $('#editUserName').val(user.name);
+            $('#editUserLastName').val(user.lastName);
+            $('#editUserAge').val(user.age);
+            $('#editUserEmail').val(user.email);
+            $('#editUserButton').attr('onclick', 'saveChanges()');
+
+
+            // Получаем список ролей пользователя
+            const userRoles = user.roles;
+
+            // Получаем список всех опций в select
+            const roleSelect = document.getElementById('editUserRoles');
+            const options = roleSelect.options;
+
+            // Сбрасываем выбранные значения
+            for (let i = 0; i < options.length; i++) {
+                options[i].selected = false;
+            }
+
+            // Устанавливаем выбранные значения для ролей пользователя
+            userRoles.forEach(userRole => {
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].value === userRole.name) {
+                        options[i].selected = true;
+                        break;
+                    }
+                }
+            });
+
+
+            $('#editModal').modal('show');
+        });
+}
+
+function saveChanges() {
+    const id = $('#editUserId').val();
+    const name = $('#editUserName').val();
+    const lastName = $('#editUserLastName').val();
+    const age = $('#editUserAge').val();
+    const email = $('#editUserEmail').val();
+    const password = $('#editUserPassword').val();
+    const roles = $('#editUserRoles').val();
+
+    const user = {
+        id: id,
+        name: name,
+        lastName: lastName,
+        age: parseInt(age),
+        email: email,
+        password: password,
+        roles: roles.map(roleName => ({ name: roleName, id: $('#rolesAdd option[value="' + roleName + '"]').attr('data-id') }))
+    };
+
+    fetch(`/api/users/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    }).then(response => {
+        if (response.ok) {
+            // Обновляем таблицу после успешного сохранения
+            getUsers();
+            $('#errorAlertModal').addClass('d-none');
+            $('#editModal').modal('hide'); // Закрываем модальное окно
+        } else {
+            $('#errorAlertModal').removeClass('d-none');
+        }
+    });
+}
+
+
+function showModalDelete(userId) {
+    fetch(`/api/users/${userId}`)
+        .then(response => response.json())
+        .then(user => {
+            $('#deleteUserId').val(user.id);
+            $('#deleteUserName').val(user.name);
+            $('#deleteUserLastName').val(user.lastName);
+            $('#deleteUserAge').val(user.age);
+            $('#deleteUserEmail').val(user.email);
+            $('#deleteUserButton').attr('onclick', `deleteUser(${user.id})`);
+
+            // Получаем список ролей пользователя
+            const userRoles = user.roles;
+
+            // Получаем список всех опций в select
+            const roleSelect = document.getElementById('deleteUserRoles');
+            const options = roleSelect.options;
+
+            // Сбрасываем выбранные значения
+            for (let i = 0; i < options.length; i++) {
+                options[i].selected = false;
+            }
+
+            // Устанавливаем выбранные значения для ролей пользователя
+            userRoles.forEach(userRole => {
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].value === userRole.name) {
+                        options[i].selected = true;
+                        break;
+                    }
+                }
+            });
+
+
+            $('#deleteModal').modal('show');
+        });
+}
+
+function deleteUser(id) {
+    console.info('deleting user :' + id)
+        fetch(`/api/users/${id}`, {
+            method: 'DELETE',
+        }).then(response => {
+            if (response.ok) {
+                // Обновляем таблицу после успешного удаления
+                getUsers();
+                $('#deleteModal').modal('hide'); // Закрываем модальное окно
+            } else {
+                console.error('Failed to delete user');
+            }
+        });
+}
+
+
 
 function getRoles() {
     fetch('/api/users/roleList')
         .then(response => response.json())
         .then(roles => {
-            const select = $('#rolesAdd');
+            let select = $('#rolesAdd');
+            select.empty();
+            roles.forEach(role => {
+                select.append(`<option value="${role.name}" data-id="${role.id}">${role.name}</option>`);
+            });
+
+            select = $('#editUserRoles');
+            select.empty();
+            roles.forEach(role => {
+                select.append(`<option value="${role.name}" data-id="${role.id}">${role.name}</option>`);
+            });
+
+            select = $('#deleteUserRoles');
             select.empty();
             roles.forEach(role => {
                 select.append(`<option value="${role.name}" data-id="${role.id}">${role.name}</option>`);
@@ -92,28 +235,10 @@ function addUser() {
         .then(response => {
             if (response.ok) {
                 getUsers();
-                window.location.replace("/admin");
+                document.getElementById('users-tab').click();
+                $('#errorAlert').addClass('d-none');
             } else {
                 $('#errorAlert').removeClass('d-none');
-            }
-        });
-}
-
-
-
-
-
-function editUser(userId) {
-    // Implement editing user
-}
-
-function deleteUser(userId) {
-    fetch(`/api/users/${userId}`, { method: 'DELETE' })
-        .then(response => {
-            if (response.ok) {
-                getUsers();
-            } else {
-                console.error('Failed to delete user');
             }
         });
 }
