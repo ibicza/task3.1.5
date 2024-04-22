@@ -100,13 +100,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean isEmailUnique(String email) {
-        return repository.findByEmail(email).isEmpty();
+        return repository.getUserByEmail(email).isEmpty();
     }
 
     public boolean isEmailUnique(String email, Long exceptId) {
-        return repository.findByEmail(email).stream().allMatch(user -> user.getId().equals(exceptId));
+        return repository.getUserByEmail(email).stream().allMatch(user -> user.getId().equals(exceptId));
     }
-
 
 
 

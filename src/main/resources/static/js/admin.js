@@ -297,7 +297,7 @@ function addUser() {
     })
         .then(response => {
             if (response.ok) {
-                console.info('successfully added user :' + id)
+                console.info('successfully added user')
                 getUsers();
                 document.getElementById('users-tab').click();
                 $('#errorAlert').addClass('d-none');
